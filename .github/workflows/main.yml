@@ -2,8 +2,9 @@
 
 name: Create release branch
 on:
-  schedule:
-    - cron: '0 13 * * 2' 
+  push:
+    branches:
+      - task/DMS-5790 
     
 jobs:
   build:
@@ -13,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-         ref: develop
+         ref: task/DMS-5790
 
       - name: Create Release
         id: create_release
