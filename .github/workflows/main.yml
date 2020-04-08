@@ -24,7 +24,13 @@ jobs:
       - name: Git Semantic Version
         uses: PaulHatch/semantic-version@v2.1.1
 
-
+      - name: Create Branch
+        uses: peterjgrainger/action-create-branch@v2.0.0
+        with:
+          branch: 'release' 
+          
+  
+    
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
