@@ -19,7 +19,9 @@ jobs:
         with:
           ref: develop
       - name: create minor version bump commit
-        run: git commit --allow-empty -m " (MINOR) Bump minor version " && git push
+        run: |
+            git config --global user.name "Github Actions"
+            git commit --allow-empty -m " (MINOR) Bump minor version " && git push
       # git checkout only clones shallow
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
