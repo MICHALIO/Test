@@ -23,13 +23,22 @@ jobs:
     
       - name: Git Semantic Version
         uses: PaulHatch/semantic-version@v2.1.1
+        id: tag_version
+        with:
+          # The branch to count commits on
+          branch: "master"
+          tag_prefix: ""
+          # A string which, if present in a git commit, indicates that a change represents a major (breaking) change
+          major_pattern: "(MAJOR)"
+          # Same as above except indicating a minor change
+          minor_pattern: "(MINOR)"
+          # A string to determine the format of the version output
+          format: "${major}.${minor}.${patch}"
 
       - name: Create Branch
         uses: peterjgrainger/action-create-branch@v2.0.0
         with:
-          branch: 'release' 
-          
-  
+          branch: 'release/${{ steps.tag_version.outputs.version }}'
     
       - name: Create Release
         id: create_release
@@ -37,8 +46,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.t ag_version.outputs.version }}
+          release_name: Release/${{ steps.tag_version.outputs.version }}
           body: |
             Changes in this Release
             - First Change
