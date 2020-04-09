@@ -8,55 +8,50 @@
 name: Create release branch
 on:
   push
-    
+
 jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
           ref: develop
-      - name: Bump minor version commit
-        run: git commit --allow-empty -m " MINOR, Bump minor version " && git push
-      # Fetch all tags
-      - run: git fetch --prune --unshallow
-
-      - name: Git Semantic Version
+      - name: create minor version bump commit
+        run: git commit --allow-empty -m " (MINOR) Bump minor version " && git push
+      # git checkout only clones shallow
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+      - name: Get bumped version
         uses: PaulHatch/semantic-version@v2.1.1
-        id: tag_version
+        id: bump_version
         with:
-          # The branch to count commits on
-          branch: "master"
+          branch: "develop"
+          # we currently don't have any prefix
           tag_prefix: ""
-          # A string which, if present in a git commit, indicates that a change represents a major (breaking) change
+          # git commit message indicating a major (breaking) change
           major_pattern: "(MAJOR)"
-          # Same as above except indicating a minor change
+          # git commit message indicating a minor change
           minor_pattern: "(MINOR)"
-          # A string to determine the format of the version output
+          # output format
           format: "${major}.${minor}.${patch}"
-
-      - name: Create Branch
+      - name: Create release branch
         uses: peterjgrainger/action-create-branch@v2.0.0
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'release/${{ steps.tag_version.outputs.version }}'
-    
+          branch: 'release/${{ steps.bump_version.outputs.version }}-rc1'
+      - name: Checkout release branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'release/${{ steps.bump_version.outputs.version }}-rc1'
       - name: Create Release
-        id: create_release
         uses: actions/create-release@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.tag_version.outputs.version }}
-          release_name: Release/${{ steps.tag_version.outputs.version }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-              
-              
-              
-
+          release_name: release/${{ steps.tag_version.outputs.version }}-rc1
+          prerelease:
+            true
