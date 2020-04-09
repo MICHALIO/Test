@@ -53,7 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_version.outputs.version }}
-          release_name: release/${{ steps.tag_version.outputs.version }}-rc1
+          tag_name: ${{ steps.bump_version.outputs.version }}
+          release_name: release/${{ steps.bump_version.outputs.version }}-rc1
           prerelease:
             true
