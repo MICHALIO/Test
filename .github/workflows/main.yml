@@ -20,7 +20,10 @@ jobs:
         uses: actions/checkout@v2
         with:
          ref: task/DMS-5790
-    
+         
+      - name: Commit and push on Develop branch
+        run: git commit --allow-empty -m " MINOR, Bump minor version " && git push
+  
       - name: Git Semantic Version
         uses: PaulHatch/semantic-version@v2.1.1
 
