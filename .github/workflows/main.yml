@@ -9,7 +9,7 @@ name: Create release branch
 on:
   push:
     branches:
-      - task/DMS-5790 
+      - master 
     
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-         ref: task/DMS-5790
+         ref: master
          
       - name: Commit and push on Develop branch
         run: git commit --allow-empty -m " MINOR, Bump minor version " && git push
