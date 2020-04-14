@@ -21,7 +21,9 @@ jobs:
       - name: create minor version bump commit
         run: |
             git config --global user.name "bot"
-            git commit --allow-empty -m " (MINOR BUMP) Bump minor version " && git push
+            git commit --allow-empty -m " (MINOR BUMP) Bump minor version "
+            git tag ${{ steps.bump_version.outputs.version }} develop
+            git push
       # git checkout only clones shallow, we need unshallow clone to get tags
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
@@ -45,16 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           branch: 'release/${{ steps.bump_version.outputs.version }}-rc1'
-      - name: Checkout release branch
-        uses: actions/checkout@v2
-        with:
-          ref: 'release/${{ steps.bump_version.outputs.version }}-rc1'
-      - name: create commit in branch and tag
-        run: |
-            git config --global user.name "bot"
-            git commit --allow-empty -m " create release/${{ steps.bump_version.outputs.version }}-rc1 "
-            git tag ${{ steps.bump_version.outputs.version }} release/${{ steps.bump_version.outputs.version }}-rc1
-            git push
       - name: Create Release
         uses: actions/create-release@latest
         env:
