@@ -41,7 +41,7 @@ jobs:
           format: "${major}.${minor}.${patch}"
       - name: Create tag on last develop commit 
         run: |
-            git tag ${{ steps.bump_version.outputs.version }} develop
+            git tag ${{ steps.bump_version.outputs.version }}-rc1 develop
             git push --tags
       # action-create-branch branches off the action's trigger branch
       - name: Create release branch
@@ -55,7 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.bump_version.outputs.version }}
+          tag_name: ${{ steps.bump_version.outputs.version }}-rc1
           release_name: release/${{ steps.bump_version.outputs.version }}-rc1
           prerelease:
             true
