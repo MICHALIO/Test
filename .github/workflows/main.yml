@@ -42,7 +42,7 @@ jobs:
       - name: Create tag on last develop commit 
         run: |
             git tag ${{ steps.bump_version.outputs.version }} develop
-            git push
+            git push --tags
       # action-create-branch branches off the action's trigger branch
       - name: Create release branch
         uses: peterjgrainger/action-create-branch@v2.0.0
