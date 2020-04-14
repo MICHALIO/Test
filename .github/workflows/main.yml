@@ -9,44 +9,58 @@ name: Create release branch
 on:
   push:
     branches:
-      - master 
-    
+      - develop
+
 jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+      - name: create minor version bump commit
+        run: |
+            git config --global user.name "bot"
+            git commit --allow-empty -m " (MINOR BUMP) Bump minor version " && git push
+      # git checkout only clones shallow, we need unshallow clone to get tags
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+      - name: Get bumped version
+        uses: PaulHatch/semantic-version@v2.1.1
+        id: bump_version
+        with:
+          branch: "develop"
+          # we currently don't have any prefix
+          tag_prefix: ""
+          # git commit message indicating a major (breaking) change
+          major_pattern: "(MAJOR BUMP)"
+          # git commit message indicating a minor change
+          minor_pattern: "(MINOR BUMP)"
+          # output format
+          format: "${major}.${minor}.${patch}"
+      # action-create-branch branches off the action's trigger branch
+      - name: Create release branch
+        uses: peterjgrainger/action-create-branch@v2.0.0
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: 'release/${{ steps.bump_version.outputs.version }}-rc1'
+      - name: Checkout release branch
         uses: actions/checkout@v2
         with:
-         ref: master
-         
-      - name: Commit and push on Develop branch
-        run: git commit --allow-empty -m " MINOR, Bump minor version " && git push
-  
-      - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v2.1.1
-
-      - name: Create Branch
-        uses: peterjgrainger/action-create-branch@v2.0.0
-        with:
-          branch: 'release' 
-          
-  
-    
+          ref: 'release/${{ steps.bump_version.outputs.version }}-rc1'
+      - name: create commit in branch and tag
+        run: |
+            git config --global user.name "bot"
+            git commit --allow-empty -m " release/${{ steps.bump_version.outputs.version }}-rc1 "
+            git tag -d ${{ steps.bump_version.outputs.version }}
+            git push
       - name: Create Release
-        id: create_release
         uses: actions/create-release@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-              
-              
-              
-
+          tag_name: ${{ steps.bump_version.outputs.version }}
+          release_name: release/${{ steps.bump_version.outputs.version }}-rc1
+          prerelease:
+            true
