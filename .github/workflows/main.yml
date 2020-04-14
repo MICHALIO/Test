@@ -52,8 +52,8 @@ jobs:
       - name: create commit in branch and tag
         run: |
             git config --global user.name "bot"
-            git commit --allow-empty -m " release/${{ steps.bump_version.outputs.version }}-rc1 "
-            git tag -d ${{ steps.bump_version.outputs.version }}
+            git commit --allow-empty -m " create release/${{ steps.bump_version.outputs.version }}-rc1 "
+            git tag ${{ steps.bump_version.outputs.version }} release/${{ steps.bump_version.outputs.version }}-rc1
             git push
       - name: Create Release
         uses: actions/create-release@latest
