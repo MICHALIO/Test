@@ -7,7 +7,9 @@
 
 name: Create release branch
 on:
-  push
+  push:
+    branches:
+      - develop
 
 jobs:
   build:
@@ -16,13 +18,11 @@ jobs:
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
-        with:
-          ref: develop
       - name: create minor version bump commit
         run: |
-            git config --global user.name "Github Actions"
-            git commit --allow-empty -m " (MINOR) Bump minor version " && git push
-      # git checkout only clones shallow
+            git config --global user.name "bot"
+            git commit --allow-empty -m " (MINOR BUMP) Bump minor version " && git push
+      # git checkout only clones shallow, we need unshallow clone to get tags
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Get bumped version
@@ -33,11 +33,12 @@ jobs:
           # we currently don't have any prefix
           tag_prefix: ""
           # git commit message indicating a major (breaking) change
-          major_pattern: "(MAJOR)"
+          major_pattern: "(MAJOR BUMP)"
           # git commit message indicating a minor change
-          minor_pattern: "(MINOR)"
+          minor_pattern: "(MINOR BUMP)"
           # output format
           format: "${major}.${minor}.${patch}"
+      # action-create-branch branches off the action's trigger branch
       - name: Create release branch
         uses: peterjgrainger/action-create-branch@v2.0.0
         env: 
@@ -48,6 +49,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: 'release/${{ steps.bump_version.outputs.version }}-rc1'
+      - name: create commit in branch and tag
+        run: |
+            git config --global user.name "bot"
+            git commit --allow-empty -m " release/${{ steps.bump_version.outputs.version }}-rc1 "
+            git tag -d ${{ steps.bump_version.outputs.version }}
+            git push
       - name: Create Release
         uses: actions/create-release@latest
         env:
