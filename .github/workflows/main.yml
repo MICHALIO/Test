@@ -3,9 +3,8 @@
 name: Create release branch
 on:
  schedule:
-   - cron: '45 10 * * *'
-     branches: 
-       - develop
+   - cron: '55 10 * * *'
+
 jobs:
   create_release:
     name: Create Release
@@ -13,6 +12,8 @@ jobs:
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
+        with:
+         ref: 'develop'
       - name: create minor version bump commit
         run: |
             git config --global user.name "bot"
