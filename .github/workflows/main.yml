@@ -3,7 +3,7 @@
 name: Create release branch
 on:
  schedule:
-   - cron: '26 9 * * *'
+   - cron: '52 11 * * *'
 
 jobs:
   create_release:
@@ -35,23 +35,33 @@ jobs:
           minor_pattern: "(MINOR BUMP)"
           # output format
           format: "${major}.${minor}.${patch}"
-      - name: Create tag on last develop commit 
-        run: |
-            git tag ${{ steps.bump_version.outputs.version }}-rc1 develop
-            git push --tags
+      
       # action-create-branch branches off the action's trigger branch
       - name: Create release branch
         uses: peterjgrainger/action-create-branch@v2.0.0
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'release/${{ steps.bump_version.outputs.version }}-rc1'
+          branch: 'release/${{ steps.bump_version.outputs.version }}'
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+         ref: 'release/${{ steps.bump_version.outputs.version }}'
+      - name: create minor version bump commit
+        run: |
+            git config --global user.name "bot"
+            git commit --allow-empty -m " create release branch " 
+            git push        
+      - name: Create tag
+        run: |
+            git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
+            git push --tags
       - name: Create Release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.bump_version.outputs.version }}-rc1
-          release_name: release/${{ steps.bump_version.outputs.version }}-rc1
+          release_name: ${{ steps.bump_version.outputs.version }}-rc1
           prerelease:
             true
