@@ -1,9 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-# name: Create release branch
-# on:
-# schedule:
-#   - cron: '01 12 * * *'
+ name: Create release branch
+ on:
+  schedule:
+    - cron: '00 13 * 6 2'
+#on:
+  #push:
+    #branches:
+      #- develop
 
 jobs:
   create_release:
