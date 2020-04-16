@@ -3,8 +3,8 @@
 # name: Create release branch
  on:
   schedule:
-    - cron: '40 09 * * *'
-      branch: 
+    - cron: '55 09 * * *'
+      branches: 
         - develop
  
 
