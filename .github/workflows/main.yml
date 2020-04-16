@@ -1,21 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-# name: Create release branch
- on:
-  schedule:
-    - cron: '55 09 * * *'
-      branches: 
-        - develop
- 
-
-# name: Create release branch
-# on:
-# push:
-#    branches:
-#     - develop
-
+name: Create release branch
+on:
+ schedule:
+   - cron: '45 10 * * *'
+     branches: 
+       - develop
 jobs:
-  build:
+  create_release:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
