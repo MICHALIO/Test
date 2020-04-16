@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           branch: 'release/${{ steps.bump_version.outputs.version }}testing'
-# branch: 'release/${{ steps.bump_version.outputs.version }}'
+        # branch: 'release/${{ steps.bump_version.outputs.version }}'
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
@@ -56,7 +56,7 @@ jobs:
       - name: Create tag
         run: |
             git tag ${{ steps.bump_version.outputs.version }}-test release/${{ steps.bump_version.outputs.version }}
-# git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
+        # git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
             git push --tags
       - name: Create Release
         uses: actions/create-release@latest
@@ -64,8 +64,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.bump_version.outputs.version }}-testing
-# tag_name: ${{ steps.bump_version.outputs.version }}-rc1
+        # tag_name: ${{ steps.bump_version.outputs.version }}-rc1
           release_name: ${{ steps.bump_version.outputs.version }}-testing
-# release_name: ${{ steps.bump_version.outputs.version }}-rc1
+        # release_name: ${{ steps.bump_version.outputs.version }}-rc1
           prerelease:
             true
