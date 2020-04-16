@@ -1,9 +1,9 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Create release branch
-on:
- schedule:
-   - cron: '01 12 * * *'
+# name: Create release branch
+# on:
+# schedule:
+#   - cron: '01 12 * * *'
 
 jobs:
   create_release:
@@ -42,11 +42,12 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'release/${{ steps.bump_version.outputs.version }}'
+          branch: 'release/${{ steps.bump_version.outputs.version }}testing'
+# branch: 'release/${{ steps.bump_version.outputs.version }}'
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
-         ref: 'release/${{ steps.bump_version.outputs.version }}'
+         ref: 'release/${{ steps.bump_version.outputs.version }}testing'
       - name: create minor version bump commit
         run: |
             git config --global user.name "bot"
@@ -54,14 +55,17 @@ jobs:
             git push        
       - name: Create tag
         run: |
-            git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
+            git tag ${{ steps.bump_version.outputs.version }}-test release/${{ steps.bump_version.outputs.version }}
+# git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
             git push --tags
       - name: Create Release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.bump_version.outputs.version }}-rc1
-          release_name: ${{ steps.bump_version.outputs.version }}-rc1
+          tag_name: ${{ steps.bump_version.outputs.version }}-testing
+# tag_name: ${{ steps.bump_version.outputs.version }}-rc1
+          release_name: ${{ steps.bump_version.outputs.version }}-testing
+# release_name: ${{ steps.bump_version.outputs.version }}-rc1
           prerelease:
             true
