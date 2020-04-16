@@ -3,7 +3,7 @@
 name: Create release branch
 on:
  schedule:
-   - cron: '55 10 * * *'
+   - cron: '00 9 * * *'
 
 jobs:
   create_release:
