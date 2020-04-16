@@ -4,6 +4,7 @@ name: Create release branch
 on:
  schedule:
     - cron: '00 13 * 6 2'
+   #- cron: '00 13 * * 2'  
 
 jobs:
   create_release:
@@ -42,12 +43,12 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'release/${{ steps.bump_version.outputs.version }}testing'
+          branch: 'release/${{ steps.bump_version.outputs.version }}-testing'
         # branch: 'release/${{ steps.bump_version.outputs.version }}'
       - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
-         ref: 'release/${{ steps.bump_version.outputs.version }}testing'
+         ref: 'release/${{ steps.bump_version.outputs.version }}-testing'
       - name: create minor version bump commit
         run: |
             git config --global user.name "bot"
@@ -55,9 +56,10 @@ jobs:
             git push        
       - name: Create tag
         run: |
-            git tag ${{ steps.bump_version.outputs.version }}-test release/${{ steps.bump_version.outputs.version }}
-        # git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
+            git tag ${{ steps.bump_version.outputs.version }}-test release/${{ steps.bump_version.outputs.version }}-testing
             git push --tags
+        # git tag ${{ steps.bump_version.outputs.version }}-rc1 release/${{ steps.bump_version.outputs.version }}
+        # git push --tags
       - name: Create Release
         uses: actions/create-release@latest
         env:
