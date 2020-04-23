@@ -1,6 +1,6 @@
 # This workflow creates a new release every Tuesday 
 # name: Create release branch
-# on:
+# on: 
 # schedule:
    #- cron: '00 13 * * 2'  
 on:
