@@ -30,7 +30,7 @@ jobs:
           # git commit message indicating a major (breaking) change
           major_pattern: "(MAJOR BUMP)"
           # git commit message indicating a minor change
-          minor_pattern: ""
+          minor_pattern: " "
           # output format
           format: "${major}.${minor}.${patch}"
       
