@@ -1,10 +1,12 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Create release branch
-on:
- schedule:
-    - cron: '00 13 * 6 2'
+# This workflow creates a new release every Tuesday 
+# name: Create release branch
+# on:
+# schedule:
    #- cron: '00 13 * * 2'  
+on:
+  push:
+    branches:
+      - develop
 
 jobs:
   create_release:
@@ -15,11 +17,6 @@ jobs:
         uses: actions/checkout@v2
         with:
          ref: 'develop'
-      - name: create minor version bump commit
-        run: |
-            git config --global user.name "bot"
-            git commit --allow-empty -m " (MINOR BUMP) Bump minor version " 
-            git push
       # git checkout only clones shallow, we need unshallow clone to get tags
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
@@ -33,7 +30,7 @@ jobs:
           # git commit message indicating a major (breaking) change
           major_pattern: "(MAJOR BUMP)"
           # git commit message indicating a minor change
-          minor_pattern: "(MINOR BUMP)"
+          minor_pattern: ""
           # output format
           format: "${major}.${minor}.${patch}"
       
@@ -53,7 +50,7 @@ jobs:
         run: |
             git config --global user.name "bot"
             git commit --allow-empty -m " create release branch " 
-            git push        
+            git push
       - name: Create tag
         run: |
             git tag ${{ steps.bump_version.outputs.version }}-test release/${{ steps.bump_version.outputs.version }}-testing
